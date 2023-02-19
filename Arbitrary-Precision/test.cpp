@@ -8,7 +8,7 @@ int main()
     std::cout << a << std::endl;
     std::cout << b << std::endl;
     // c="0100";
-    c = a*b;
+    c = a - b;
     std::cout << c << std::endl;
 
     std::cin.get();

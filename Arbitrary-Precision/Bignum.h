@@ -10,7 +10,12 @@ class Bignum
 
 private:
     std::vector<int> num; // 储存数字
-    // bool flag;                              //判断是否为负
+
+    /**
+     * To do
+     * 添加正负判断
+     */
+    // bool flag;
 
 public:
     Bignum() {}
@@ -23,10 +28,11 @@ public:
     friend std::istream &operator>>(std::istream &in, Bignum &t);
     friend std::ostream &operator<<(std::ostream &out, Bignum &t);
 
-    inline Bignum operator+(Bignum &t);
     inline Bignum operator+(const long long t);
+    inline Bignum operator+(Bignum &t);
 
-    // inline Bignum operator- (Bignum &t);
+    inline Bignum operator-(const long long t);
+    inline Bignum operator-(const Bignum &t);
 
     inline Bignum operator*(const long long t);
     inline Bignum operator*(const Bignum &t);
@@ -72,6 +78,13 @@ std::ostream &operator<<(std::ostream &out, Bignum &t)
         out << t.num[i];
     }
     return out;
+}
+
+Bignum Bignum::operator+(const long long t)
+{
+    Bignum a;
+    a = std::to_string(t);
+    return (a + *this);
 }
 
 Bignum Bignum::operator+(Bignum &t)
@@ -123,13 +136,6 @@ Bignum Bignum::operator+(Bignum &t)
     return a;
 }
 
-Bignum Bignum::operator+(const long long t)
-{
-    Bignum a;
-    a = std::to_string(t);
-    return (a + *this);
-}
-
 Bignum Bignum::operator*(const long long t)
 {
     Bignum a;
@@ -169,11 +175,18 @@ Bignum Bignum::operator*(const Bignum &t)
 
     for (int i = 0; i < this->num.size(); i++)
     {
-        for(int j = 0; j < t.num.size(); j++)
+        for (int j = 0; j < t.num.size(); j++)
         {
-            a.num[i+j] += this->num[i] + t.num[j];
-            a.num[i+j+1] += a.num[i+j]/10;
-            a.num[i+j] %= 10;
+            a.num[i + j] += this->num[i] * t.num[j];
+        }
+    }
+
+    for (int i = 0; i < a.num.size(); i++)
+    {
+        if (a.num[i] > 9)
+        {
+            a.num[i + 1] += a.num[i] / 10;
+            a.num[i] %= 10;
         }
     }
 
@@ -184,6 +197,45 @@ Bignum Bignum::operator*(const Bignum &t)
     }
 
     return a;
+}
+
+Bignum Bignum::operator-(const long long t)
+{
+    Bignum m;
+    m = t;
+    *this = *this - m;
+    return *this;
+}
+
+Bignum Bignum::operator-(const Bignum &t)
+{
+    for (int i = 0; i < t.num.size(); i++)
+    {
+        // 处理借位
+        if (this->num[i] > t.num[i])
+        {
+            this->num[i] -= t.num[i];
+        }
+        else
+        {
+            int a = i;
+            while (this->num[a + 1] == 0)
+            {
+                this->num[a + 1] = 9;
+                a++;
+            }
+            this->num[a + 1] -= 1;
+            this->num[i] = this->num[i] + 10 - t.num[i];
+        }
+    }
+
+    // 清除前面的0
+    while (this->num.size() > 0 && this->num[this->num.size() - 1] == 0)
+    {
+        this->num.pop_back();
+    }
+
+    return *this;
 }
 
 #endif
