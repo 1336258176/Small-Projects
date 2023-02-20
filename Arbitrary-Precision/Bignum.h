@@ -36,6 +36,9 @@ public:
 
     inline Bignum operator*(const long long t);
     inline Bignum operator*(const Bignum &t);
+
+    inline Bignum operator/(const long long t);
+    inline Bignum operator/(const Bignum &t);
 };
 
 Bignum Bignum::operator=(const std::string t)
@@ -236,6 +239,11 @@ Bignum Bignum::operator-(const Bignum &t)
     }
 
     return *this;
+}
+
+Bignum Bignum::operator/(const Bignum &t)
+{
+    
 }
 
 #endif
