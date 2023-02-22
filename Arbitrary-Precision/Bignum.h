@@ -243,7 +243,6 @@ Bignum Bignum::operator-(const Bignum &t)
 
 Bignum Bignum::operator/(const Bignum &t)
 {
-    
 }
 
 #endif

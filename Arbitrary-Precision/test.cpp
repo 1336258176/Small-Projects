@@ -3,7 +3,7 @@
 int main()
 {
     Bignum a, b, c;
-    std::cin >> a ;
+    std::cin >> a;
     std::cin >> b;
     std::cout << a << std::endl;
     std::cout << b << std::endl;
