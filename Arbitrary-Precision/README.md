@@ -4,10 +4,12 @@
 
 ## Contents
 
-- [前言](#前言)
-- [相关代码](#相关代码)
-- [思路](#思路)
-- [参考资料](#参考资料)
+- [高精度算法](#高精度算法)
+  - [Contents](#contents)
+  - [前言](#前言)
+  - [相关代码](#相关代码)
+  - [思路](#思路)
+  - [参考资料：](#参考资料)
 
 ## 前言
 
@@ -29,3 +31,4 @@
 
 - [C/C++高精度运算(大整数运算)详解（含压位）](https://blog.csdn.net/weixin_41162823/article/details/80044079)
 - [高精度计算-OI Wiki](https://oi-wiki.org/math/bignum/)
+- [从零开始学算法：高精度计算](https://www.cnblogs.com/ECJTUACM-873284962/p/6509429.html)

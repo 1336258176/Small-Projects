@@ -10,35 +10,36 @@ class Bignum
 
 private:
     std::vector<int> num; // 储存数字
-
-    /**
-     * To do
-     * 添加正负判断
-     */
-    // bool flag;
+    // bool flag;              //判断正负，真为正，假为负
 
 public:
     Bignum() {}
     ~Bignum() {}
 
-    inline Bignum operator=(const std::string t);
-    inline void operator=(const Bignum &t);
-    inline void operator=(const long long t);
+    Bignum operator=(const std::string t);                   //字符串赋值
+    void operator=(const long long t);                       //低精赋值
+    void operator=(const Bignum &t);                         //高精赋值
 
-    friend std::istream &operator>>(std::istream &in, Bignum &t);
-    friend std::ostream &operator<<(std::ostream &out, Bignum &t);
+    friend std::istream &operator>>(std::istream &in, Bignum &t);   //重载输入
+    friend std::ostream &operator<<(std::ostream &out, Bignum &t);  //重载输出
 
-    inline Bignum operator+(const long long t);
-    inline Bignum operator+(Bignum &t);
+    Bignum operator+(const long long t);                     //高精加低精
+    Bignum operator+(Bignum &t);                             //高精加高精
 
-    inline Bignum operator-(const long long t);
-    inline Bignum operator-(const Bignum &t);
+    Bignum operator-(const long long t);                     //高精减低精
+    Bignum operator-(const Bignum &t);                       //高精减高精
 
-    inline Bignum operator*(const long long t);
-    inline Bignum operator*(const Bignum &t);
+    Bignum operator*(const long long t);                     //高精乘低精
+    Bignum operator*(const Bignum &t);                       //高精乘高精
 
-    inline Bignum operator/(const long long t);
-    inline Bignum operator/(const Bignum &t);
+    Bignum operator/(const long long t);                     //高精除以低精
+    Bignum operator/(const Bignum &t);                       //高精除以高精  ????
+
+    Bignum operator%(const long long t);                     //高精取模低精
+    Bignum operator%(const Bignum &t);                       //高精取模高精  ????
+
+    bool compare(const long long t);                         //高精与低精间比较大小
+    bool compare(const Bignum &t);                           //高精度间比较大小
 };
 
 Bignum Bignum::operator=(const std::string t)
@@ -241,8 +242,88 @@ Bignum Bignum::operator-(const Bignum &t)
     return *this;
 }
 
-Bignum Bignum::operator/(const Bignum &t)
+Bignum Bignum::operator/(const long long t)
 {
+    int count = this->num.size();
+    int r[count + 1] = {0};                         //各位置上的余数
+    int m[count + 1] = {0};                         //用于计算各位置上的商
+
+    //按照从高位到低位的顺序，逐位相除。在除到第i位时，该位在接受了来自第i+1位的余数后与除数相除
+    for (int i = count - 1; i >= 0; i--)
+    {
+        m[i] = this->num[i];
+        m[i] += r[i+1] * 10;
+        r[i] = m[i] % t;
+        this->num[i] = m[i] / t;
+    }
+
+    // 清除前面的0
+    while (this->num.size() > 0 && this->num[this->num.size() - 1] == 0)
+    {
+        this->num.pop_back();
+    }
+
+
+    return *this;
+}
+
+Bignum Bignum::operator% (const long long t)
+{
+    int count = this->num.size();
+    int r[count + 1] = {0};                         //各位置上的余数
+    int m[count + 1] = {0};                         //用于计算各位置上的商
+    Bignum p;
+
+    for (int i = count - 1; i >= 0; i--)
+    {
+        m[i] = this->num[i];
+        m[i] += r[i+1] * 10;
+        r[i] = m[i] % t;
+        this->num[i] = m[i] / t;
+    }
+
+    p.num.push_back(r[0]);
+    return p;
+}
+
+bool Bignum::compare(const long long t)
+{
+    Bignum m;
+    m = t;
+    return this->compare(m);
+}
+
+bool Bignum::compare(const Bignum &t)
+{
+    //位数比较
+    if (this->num.size() < t.num.size())
+    {
+        return false;
+    }
+    else if (this->num.size() > t.num.size())
+    {
+        return true;
+    }
+    //逐位比较
+    else
+    {
+        int i = this->num.size()-1;
+        while (i >= 0)
+        {
+            if (this->num[i] < t.num[i])
+            {
+                return false;
+            }
+            else if(this->num[i] > t.num[i])
+            {
+                return true;
+            }else
+            {
+                i--;
+            }
+        }
+        return true;
+    }
 }
 
 #endif
