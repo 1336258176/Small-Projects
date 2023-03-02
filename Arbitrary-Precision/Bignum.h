@@ -15,6 +15,10 @@ private:
 public:
     Bignum() {}
     ~Bignum() {}
+    
+    //比较大小：大于等于返回true，否则返回false
+    bool compare(const long long t);                         //高精与低精间比较大小
+    bool compare(const Bignum &t);                           //高精度间比较大小
 
     Bignum operator=(const std::string t);                   //字符串赋值
     void operator=(const long long t);                       //低精赋值
@@ -38,8 +42,8 @@ public:
     Bignum operator%(const long long t);                     //高精取模低精
     Bignum operator%(const Bignum &t);                       //高精取模高精  ????
 
-    bool compare(const long long t);                         //高精与低精间比较大小
-    bool compare(const Bignum &t);                           //高精度间比较大小
+    bool operator>(const Bignum &t);
+    bool operator<(const Bignum &t);
 };
 
 Bignum Bignum::operator=(const std::string t)
@@ -325,5 +329,31 @@ bool Bignum::compare(const Bignum &t)
         return true;
     }
 }
+
+bool Bignum::operator>(const Bignum &t)
+{
+    if (this->compare(t))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Bignum::operator<(const Bignum &t)
+{
+    if (this->compare(t))
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+    
+}
+
 
 #endif
