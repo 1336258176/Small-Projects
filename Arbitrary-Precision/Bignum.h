@@ -15,32 +15,32 @@ private:
 public:
     Bignum() {}
     ~Bignum() {}
-    
-    //比较大小：大于等于返回true，否则返回false
-    bool compare(const long long t);                         //高精与低精间比较大小
-    bool compare(const Bignum &t);                           //高精度间比较大小
 
-    Bignum operator=(const std::string t);                   //字符串赋值
-    void operator=(const long long t);                       //低精赋值
-    void operator=(const Bignum &t);                         //高精赋值
+    // 比较大小：大于等于返回true，否则返回false
+    bool compare(const long long t); // 高精与低精间比较大小
+    bool compare(const Bignum &t);   // 高精度间比较大小
 
-    friend std::istream &operator>>(std::istream &in, Bignum &t);   //重载输入
-    friend std::ostream &operator<<(std::ostream &out, Bignum &t);  //重载输出
+    Bignum operator=(const std::string t); // 字符串赋值
+    void operator=(const long long t);     // 低精赋值
+    void operator=(const Bignum &t);       // 高精赋值
 
-    Bignum operator+(const long long t);                     //高精加低精
-    Bignum operator+(Bignum &t);                             //高精加高精
+    friend std::istream &operator>>(std::istream &in, Bignum &t);  // 重载输入
+    friend std::ostream &operator<<(std::ostream &out, Bignum &t); // 重载输出
 
-    Bignum operator-(const long long t);                     //高精减低精
-    Bignum operator-(const Bignum &t);                       //高精减高精
+    Bignum operator+(const long long t); // 高精加低精
+    Bignum operator+(Bignum &t);         // 高精加高精
 
-    Bignum operator*(const long long t);                     //高精乘低精
-    Bignum operator*(const Bignum &t);                       //高精乘高精
+    Bignum operator-(const long long t); // 高精减低精
+    Bignum operator-(const Bignum &t);   // 高精减高精
 
-    Bignum operator/(const long long t);                     //高精除以低精
-    Bignum operator/(const Bignum &t);                       //高精除以高精  ????
+    Bignum operator*(const long long t); // 高精乘低精
+    Bignum operator*(const Bignum &t);   // 高精乘高精
 
-    Bignum operator%(const long long t);                     //高精取模低精
-    Bignum operator%(const Bignum &t);                       //高精取模高精  ????
+    Bignum operator/(const long long t); // 高精除以低精
+    Bignum operator/(const Bignum &t);   // 高精除以高精  ????
+
+    Bignum operator%(const long long t); // 高精取模低精
+    Bignum operator%(const Bignum &t);   // 高精取模高精  ????
 
     bool operator>(const Bignum &t);
     bool operator<(const Bignum &t);
@@ -249,14 +249,14 @@ Bignum Bignum::operator-(const Bignum &t)
 Bignum Bignum::operator/(const long long t)
 {
     int count = this->num.size();
-    int r[count + 1] = {0};                         //各位置上的余数
-    int m[count + 1] = {0};                         //用于计算各位置上的商
+    int r[count + 1] = {0}; // 各位置上的余数
+    int m[count + 1] = {0}; // 用于计算各位置上的商
 
-    //按照从高位到低位的顺序，逐位相除。在除到第i位时，该位在接受了来自第i+1位的余数后与除数相除
+    // 按照从高位到低位的顺序，逐位相除。在除到第i位时，该位在接受了来自第i+1位的余数后与除数相除
     for (int i = count - 1; i >= 0; i--)
     {
         m[i] = this->num[i];
-        m[i] += r[i+1] * 10;
+        m[i] += r[i + 1] * 10;
         r[i] = m[i] % t;
         this->num[i] = m[i] / t;
     }
@@ -267,21 +267,85 @@ Bignum Bignum::operator/(const long long t)
         this->num.pop_back();
     }
 
-
     return *this;
 }
 
-Bignum Bignum::operator% (const long long t)
+Bignum Bignum::operator/(const Bignum &t)
+{
+    Bignum n;
+    Bignum re;
+    int x = 0;
+    int l1 = this->num.size();
+    int l2 = t.num.size();
+
+    for (int i = l1 - l2 - 1; i < l1; i++)
+    {
+        n.num.push_back(this->num[i]);
+    }
+
+    int j = l1 - l2 - 1;
+    while (j >= 0)
+    {
+        do
+        {
+            n = n - t;
+            x++;
+        } while (n < t);
+
+        if (x > 9)
+        {
+            std::string s = std::to_string(x);
+            x = 0;
+            for (int i = 0; i < s.size(); i++)
+            {
+                re.num.push_back(s[i]);
+            }
+        }else
+        {
+            re.num.push_back(x);
+            x = 0;
+        }
+
+        if (j < l1 - l2 - 1)
+        {
+            do
+            {
+                Bignum tem;
+                tem = n;
+                n.num.clear();
+                n.num.push_back(this->num[j]);
+                for (int i = 0; i < tem.num.size(); i++)
+                {
+                    n.num.push_back(tem.num[i]);
+                }
+            } while (!n.compare(t));
+        }
+
+        j--;
+    }
+
+    Bignum q;
+    q = re;
+    re.num.clear();
+    for (int i = q.num.size() - 1; i >= 0; i--)
+    {
+        re.num.push_back(q.num[i]);
+    }
+
+    return re;
+}
+
+Bignum Bignum::operator%(const long long t)
 {
     int count = this->num.size();
-    int r[count + 1] = {0};                         //各位置上的余数
-    int m[count + 1] = {0};                         //用于计算各位置上的商
+    int r[count + 1] = {0}; // 各位置上的余数
+    int m[count + 1] = {0}; // 用于计算各位置上的商
     Bignum p;
 
     for (int i = count - 1; i >= 0; i--)
     {
         m[i] = this->num[i];
-        m[i] += r[i+1] * 10;
+        m[i] += r[i + 1] * 10;
         r[i] = m[i] % t;
         this->num[i] = m[i] / t;
     }
@@ -299,7 +363,7 @@ bool Bignum::compare(const long long t)
 
 bool Bignum::compare(const Bignum &t)
 {
-    //位数比较
+    // 位数比较
     if (this->num.size() < t.num.size())
     {
         return false;
@@ -308,20 +372,21 @@ bool Bignum::compare(const Bignum &t)
     {
         return true;
     }
-    //逐位比较
+    // 逐位比较
     else
     {
-        int i = this->num.size()-1;
+        int i = this->num.size() - 1;
         while (i >= 0)
         {
             if (this->num[i] < t.num[i])
             {
                 return false;
             }
-            else if(this->num[i] > t.num[i])
+            else if (this->num[i] > t.num[i])
             {
                 return true;
-            }else
+            }
+            else
             {
                 i--;
             }
@@ -352,8 +417,6 @@ bool Bignum::operator<(const Bignum &t)
     {
         return true;
     }
-    
 }
-
 
 #endif
